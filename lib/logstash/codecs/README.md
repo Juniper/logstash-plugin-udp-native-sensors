@@ -7,6 +7,7 @@ Supported pipeline for this use cases UDP -> Juniper UDP/native sensor codec -> 
 
 Below is can example configuration.
 
+```sh
 input {
     udp {
         port => 50000
@@ -26,3 +27,4 @@ output {
         measurement => "%{sensor_name}"
     }
 }
+```
