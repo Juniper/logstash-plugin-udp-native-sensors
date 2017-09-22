@@ -1,3 +1,7 @@
+#
+# Copyright (c) 2017 Juniper Networks, Inc. All rights reserved.
+#
+
 # encoding: utf-8
 
 ##
@@ -56,6 +60,12 @@ class Rro_type_entry < ::Protobuf::Message; end
 class Rro_ipv4_type < ::Protobuf::Message; end
 class Lsp_monitor_data_property < ::Protobuf::Message; end
 class Lsp_mon < ::Protobuf::Message; end
+
+
+##
+# File Options
+#
+#set_option :optimize_for, ::Google::Protobuf::FileOptions::OptimizeMode::LITE_RUNTIME
 
 
 ##

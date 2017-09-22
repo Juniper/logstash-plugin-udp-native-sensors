@@ -25,6 +25,9 @@ output {
         allow_time_override => true
         use_event_fields_for_data_points => true
         measurement => "%{sensor_name}"
+        "time_precision" => "s"
+        flush_size => 1
+        send_as_tags => ["host", "device", "_seq"]
     }
 }
 ```

@@ -31,11 +31,22 @@ class LogStash::Codecs::JuniperUdpNativeSensors < LogStash::Codecs::Base
     
     def register
         require "logstash/codecs/proto_lib/cpu_memory_utilization.pb.rb"
-        require "logstash/codecs/proto_lib/juniper_telemetry_lib.rb"
+        require "logstash/codecs/proto_lib/juniper_telemetry_udp_lib.rb"
         require "logstash/codecs/proto_lib/port.pb.rb"
         require "logstash/codecs/proto_lib/lsp_stats.pb.rb"
-            require "logstash/codecs/proto_lib/logical_port.pb.rb"
+        require "logstash/codecs/proto_lib/logical_port.pb.rb"
         require "logstash/codecs/proto_lib/firewall.pb.rb" 
+        require "logstash/codecs/proto_lib/qmon.pb.rb"
+        require "logstash/codecs/proto_lib/cmerror.pb.rb"
+        require "logstash/codecs/proto_lib/cmerror_data.pb.rb"
+        require "logstash/codecs/proto_lib/fabric.pb.rb"
+        require "logstash/codecs/proto_lib/inline_jflow.pb.rb"
+        require "logstash/codecs/proto_lib/lsp_mon.pb.rb"
+        require "logstash/codecs/proto_lib/npu_utilization.pb.rb"
+        require "logstash/codecs/proto_lib/npu_memory_utilization.pb.rb"
+        require "logstash/codecs/proto_lib/port_exp.pb.rb"
+        require "logstash/codecs/proto_lib/packet_stats.pb.rb"
+        require "logstash/codecs/proto_lib/optics.pb.rb"
         @lines = LogStash::Codecs::Line.new
         @lines.charset = "UTF-8"
     end # def register
@@ -72,11 +83,14 @@ class LogStash::Codecs::JuniperUdpNativeSensors < LogStash::Codecs::Base
             end
         end
         
+        seq = 0
         for record in final_data
+            seq = seq + 1
             record['device'] = device_name
             record['host'] = host
             record['sensor_name'] = "juniperNetworks" + "." + datas_sensors.keys[0]
             record['time'] = gpb_time
+            record['_seq'] = seq
             yield LogStash::Event.new(record)
         end
         
@@ -87,68 +101,4 @@ class LogStash::Codecs::JuniperUdpNativeSensors < LogStash::Codecs::Base
         event.get("message").to_s + @append + NL
     end # def encode_sync
     
-    private
-    def parse_hash(data, jnpr_sensor, master_key='')
-        leaf_data = Hash.new
-        arr_data = Array.new
-        arr_key = Array.new
-        fin_data = Array.new
-        data.each do |key, value|
-            if master_key == ''
-                new_master_key = key
-            else
-                new_master_key = master_key + '.' + key
-            end
-
-            if not [Hash, Array].include?(value.class)
-                leaf_data[new_master_key] = value
-            elsif value.is_a? Array
-                arr_data << parse_array(value, jnpr_sensor, new_master_key)
-                arr_key <<  new_master_key
-            elsif value.is_a? Hash
-                arr_data << parse_hash(value, jnpr_sensor, new_master_key)
-                arr_key << new_master_key
-            end
-        end
-        # Put all the data from Array to hash.
-        # If the key names with list name to avoid overwriting
-        if not leaf_data.empty?
-            arr_key.length.times do |i|
-                for data_aa in arr_data[i]
-                    leaf_tmp = leaf_data.clone
-                    if not data_aa == nil
-                        data_aa.each do |key_aa, value_aa|
-                            leaf_tmp[key_aa] = value_aa
-                        end
-                    end
-                    fin_data += [leaf_tmp]
-                end
-            end
-        else
-            fin_data = arr_data.clone
-        end
-        arr_data.clear
-        
-        if (fin_data.to_a.empty?) && (not leaf_data.empty?)
-            fin_data += [leaf_data]
-        end
-        
-        return fin_data
-      end
-
-      def parse_array(data, jnpr_sensor, master_key)
-        
-        arr_data = []
-        for value in data
-            if value.is_a? Hash
-                arr_data += parse_hash(value, jnpr_sensor, master_key)
-            else
-                $log.error "Leaf elements in array are not coded. Please open a issue."
-            end
-        end
-        
-        return arr_data
-
-      end
-
 end # class LogStash::Codecs::JuniperUdpNativeSensors
