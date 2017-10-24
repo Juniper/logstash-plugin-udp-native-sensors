@@ -27,7 +27,7 @@ output {
         measurement => "%{sensor_name}"
         "time_precision" => "s"
         flush_size => 1
-        send_as_tags => ["host", "device", "_seq"]
+        send_as_tags => ["host", "device", "_seq", "__local_time__"]
     }
 }
 ```
