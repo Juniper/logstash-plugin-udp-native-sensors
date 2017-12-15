@@ -1,3 +1,7 @@
+#
+# Copyright (c) 2017 Juniper Networks, Inc. All rights reserved.
+#
+
 # encoding: utf-8
 require "logstash/codecs/base"
 require "logstash/codecs/line"
@@ -6,21 +10,6 @@ require 'protobuf'
 require 'json'
 require "socket"
 
-# This  codec will append a string to the message field
-# of an event, either in the decoding or encoding methods
-#
-# This is only intended to be used as an example.
-#
-# input {
-#   stdin { codec =>  }
-# }
-#
-# or
-#
-# output {
-#   stdout { codec =>  }
-# }
-#
 class LogStash::Codecs::JuniperUdpNativeSensors < LogStash::Codecs::Base
     
     # The codec name
