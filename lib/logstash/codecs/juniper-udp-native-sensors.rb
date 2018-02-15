@@ -50,7 +50,7 @@ class LogStash::Codecs::JuniperUdpNativeSensors < LogStash::Codecs::Base
         device_name = jti_msg.system_id
         puts device_name
         
-        gpb_time = epoc_to_sec(jti_msg.timestamp)
+        gpb_time = epoc_to_ms(jti_msg.timestamp)
         local_time = Time.now.to_f
         measurement_prefix = "enterprise.juniperNetworks"
         
