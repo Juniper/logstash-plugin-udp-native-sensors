@@ -49,8 +49,7 @@ bundle exec rspec
 
 - Edit Logstash `Gemfile` and add the local plugin path, for example:
 ```ruby
-gem "logstash-codec-awesome", :path => "/your/local/logstash-codec-awesome"
-"logstash-codec-juniper-udp-native-sensors", "0.1.0", :path => "/your/local/logstash-codec-juniper-udp-native-sensors-0.1.0"
+gem "logstash-codec-juniper-udp-native-sensors", "0.1.0", :path => "/your/local/logstash-codec-juniper-udp-native-sensors-0.1.0"
 ```
 - Install plugin
 ```sh
